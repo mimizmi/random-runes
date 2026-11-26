@@ -1,0 +1,56 @@
+{
+  "name": "random-runes",
+  "version": "7.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win zip",
+    "check": "node --check main.js"
+  },
+  "keywords": [
+    "league-of-legends",
+    "electron",
+    "bilibili",
+    "danmaku",
+    "runes"
+  ],
+  "author": "魔法伊",
+  "license": "ISC",
+  "description": "英雄联盟主播直播用的随机符文/装备抽取与 B 站弹幕互动工具",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mimizmi/random-runes.git"
+  },
+  "homepage": "https://github.com/mimizmi/random-runes#readme",
+  "bugs": {
+    "url": "https://github.com/mimizmi/random-runes/issues"
+  },
+  "dependencies": {
+    "bilibili-live-ws": "^3.0.0",
+    "league-connect": "^6.0.0-rc13"
+  },
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "files": [
+      "index.html",
+      "logo.jpg",
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "extraResources": [
+      {
+        "from": "build/icon.ico",
+        "to": "icon.ico"
+      }
+    ]
+  }
+}
