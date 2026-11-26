@@ -65,7 +65,7 @@ npm run check
 npm run pack
 ```
 
-生成用于分发的 zip：
+生成用于分发的 zip（zip 用于发给别人；本地直接运行仍建议用 `pack.ps1` 产出的目录）：
 
 ```powershell
 npm run dist
