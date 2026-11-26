@@ -18,7 +18,7 @@
 ## 下载与安装
 
 1. 打开 [Releases](https://github.com/mimizmi/random-runes/releases/latest)。
-2. 下载最新的 `random-runes-*-win-x64.zip`。
+2. 下载最新的 `random-runes-*-win.zip`。
 3. **解压到普通文件夹后再运行**（不要在压缩包预览窗口里直接双击）。
 4. 双击 `random-runes.exe`，在 UAC 提示中允许管理员权限。
 
