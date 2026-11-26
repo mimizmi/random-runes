@@ -53,3 +53,16 @@ contextBridge.exposeInMainWorld('danmaku', {
         return () => ipcRenderer.removeListener('danmaku-auth', handler);
     }
 });
+
+contextBridge.exposeInMainWorld('updates', {
+    getState: () => ipcRenderer.invoke('update:get-state'),
+    check: () => ipcRenderer.invoke('update:check'),
+    install: () => ipcRenderer.invoke('update:install'),
+    dismiss: (version) => ipcRenderer.invoke('update:dismiss', version),
+    openRelease: () => ipcRenderer.invoke('update:open-release'),
+    onState: (cb) => {
+        const handler = (_event, data) => cb(data);
+        ipcRenderer.on('update:state', handler);
+        return () => ipcRenderer.removeListener('update:state', handler);
+    }
+});

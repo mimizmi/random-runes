@@ -888,6 +888,143 @@
             border-radius: 999px;
         }
 
+        /* === 应用更新 === */
+        .update-link {
+            background: transparent;
+            border: 0;
+            padding: 0;
+            color: #93a2ba;
+            cursor: pointer;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            transition: color 0.2s ease;
+        }
+        .update-link:hover { color: #f5e4b0; }
+        .update-link:disabled { opacity: 0.6; cursor: progress; }
+        .update-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #f0c36b;
+            box-shadow: 0 0 10px rgba(240, 195, 107, 0.9);
+            animation: updatePulse 1.8s ease-in-out infinite;
+        }
+        @keyframes updatePulse {
+            0%, 100% { opacity: 0.55; transform: scale(0.85); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+        .update-toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 140;
+            width: min(92vw, 340px);
+            padding: 16px 16px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(217, 183, 108, 0.5);
+            background: linear-gradient(180deg, rgba(14, 21, 33, 0.98), rgba(6, 10, 17, 0.98));
+            box-shadow: 0 18px 44px rgba(2, 6, 12, 0.72), 0 0 24px rgba(217, 183, 108, 0.12);
+            text-align: left;
+        }
+        .update-toast-close {
+            position: absolute;
+            top: 7px;
+            right: 9px;
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            border: 1px solid #2b3442;
+            background: rgba(16, 24, 36, 0.9);
+            color: #c7d0df;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .update-toast-close:hover { border-color: rgba(217, 183, 108, 0.6); color: #f5e4b0; }
+        .update-toast-kicker {
+            font-size: 9px;
+            letter-spacing: 0.32em;
+            color: #8b93a1;
+            text-transform: uppercase;
+        }
+        .update-toast-title {
+            margin-top: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #f7edd0;
+        }
+        .update-toast-title span { color: #f0c36b; }
+        .update-toast-desc {
+            margin-top: 6px;
+            font-size: 11px;
+            line-height: 1.6;
+            color: #93a2ba;
+        }
+        .update-toast-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .update-toast-primary {
+            padding: 7px 16px;
+            font-size: 11px;
+            border-radius: 999px;
+        }
+        .update-ghost {
+            background: transparent;
+            border: 1px solid #2b3442;
+            color: #93a2ba;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .update-ghost:hover { border-color: rgba(217, 183, 108, 0.6); color: #f5e4b0; }
+        .update-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+        #update-modal { z-index: 150; }
+        .update-panel {
+            width: min(92vw, 460px);
+            text-align: left;
+        }
+        .update-notes {
+            max-height: 170px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid #273143;
+            background: #0b1119;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 11px;
+            line-height: 1.7;
+            color: #a9b3c4;
+        }
+        .update-progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #141d2b;
+            overflow: hidden;
+            border: 1px solid #273143;
+        }
+        .update-progress-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #d9b76c, #6fd2ff);
+            transition: width 0.2s ease;
+        }
+        .update-actions {
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+        .update-actions .lol-btn {
+            min-width: 128px;
+            padding: 9px 18px;
+            font-size: 11px;
+            border-radius: 999px;
+        }
+
         .rune-divider {
             position: absolute;
             inset: 0 auto 0 0;
@@ -1019,6 +1156,12 @@
         <div class="p-4 border-t border-[#1f2836] text-center text-[11px] text-[#7f8899] shrink-0 bg-[#0a1018]">
             每晚八点锁定B站23805660<br>
             Powered by JJWG
+            <div class="mt-2 flex items-center justify-center gap-2 text-[10px] text-[#6b7789]">
+                <span id="app-version-label">v-</span>
+                <span class="text-[#3b4658]">·</span>
+                <button id="check-update-btn" type="button" class="update-link">检查更新</button>
+                <span id="update-dot" class="update-dot hidden" aria-hidden="true"></span>
+            </div>
         </div>
     </aside>
 
@@ -1346,6 +1489,41 @@
         </div>
 
     </main>
+
+    <!-- 更新提示：右下角浮层 -->
+    <div id="update-toast" class="hidden update-toast" role="status" aria-live="polite">
+        <button id="update-toast-close" class="update-toast-close" type="button" aria-label="忽略此版本">×</button>
+        <div class="update-toast-kicker">Update Available</div>
+        <div class="update-toast-title">发现新版本 <span id="update-toast-version">-</span></div>
+        <div class="update-toast-desc">当前 <span id="update-toast-current">-</span>，可一键更新并自动重启。</div>
+        <div class="update-toast-actions">
+            <button id="update-toast-install" class="lol-btn update-toast-primary uppercase" type="button">一键更新</button>
+            <button id="update-toast-details" class="update-ghost" type="button">详情</button>
+        </div>
+    </div>
+
+    <!-- 更新详情 / 进度 -->
+    <div id="update-modal" class="hidden qr-modal" role="dialog" aria-modal="true" aria-labelledby="update-title">
+        <div class="qr-modal-mask" data-update-close="1"></div>
+        <div class="qr-modal-panel update-panel">
+            <button id="update-close" class="qr-modal-close" type="button" aria-label="关闭更新弹窗">×</button>
+            <div class="text-[11px] uppercase tracking-[0.32em] text-[#7c879a]">Update</div>
+            <div id="update-title" class="text-lg font-bold text-[#f7edd0] mt-2">发现新版本</div>
+            <div id="update-versions" class="text-xs text-[#93a2ba] mt-1"></div>
+            <div id="update-notes" class="update-notes mt-3"></div>
+            <div id="update-progress-wrap" class="update-progress hidden mt-4">
+                <div class="update-progress-track">
+                    <div id="update-progress-bar" class="update-progress-bar"></div>
+                </div>
+                <div id="update-progress-text" class="text-[11px] text-[#93a2ba] mt-2">0%</div>
+            </div>
+            <div id="update-status" class="text-xs text-[#93a2ba] mt-3" role="status" aria-live="polite"></div>
+            <div class="qr-modal-actions update-actions">
+                <button id="update-install" class="lol-btn uppercase" type="button">一键更新</button>
+                <button id="update-release" class="update-ghost" type="button">打开发布页</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MiIgaGVpZ2h0PSI1MiIgdmlld0JveD0iMCAwIDUyIDUyIj48Y2lyY2xlIGN4PSIyNiIgY3k9IjI2IiByPSIyNSIgZmlsbD0iIzFjMWMxYyIgc3Ryb2tlPSIjNzg1YTI4IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzc4NWEyOCIgZm9udC1zaXplPSIxMiI+PzwvdGV4dD48L3N2Zz4=';
@@ -3418,6 +3596,213 @@ for (let i = 0; i < count; i++) {
         }
 
 
+        // --- 自动更新 UI ---
+        function initUpdateUI() {
+            if (!window.updates) return;
+
+            const ui = {
+                version: document.getElementById('app-version-label'),
+                checkBtn: document.getElementById('check-update-btn'),
+                dot: document.getElementById('update-dot'),
+                toast: document.getElementById('update-toast'),
+                toastVersion: document.getElementById('update-toast-version'),
+                toastCurrent: document.getElementById('update-toast-current'),
+                toastInstall: document.getElementById('update-toast-install'),
+                toastDetails: document.getElementById('update-toast-details'),
+                toastClose: document.getElementById('update-toast-close'),
+                modal: document.getElementById('update-modal'),
+                close: document.getElementById('update-close'),
+                title: document.getElementById('update-title'),
+                versions: document.getElementById('update-versions'),
+                notes: document.getElementById('update-notes'),
+                progressWrap: document.getElementById('update-progress-wrap'),
+                progressBar: document.getElementById('update-progress-bar'),
+                progressText: document.getElementById('update-progress-text'),
+                status: document.getElementById('update-status'),
+                installBtn: document.getElementById('update-install'),
+                releaseBtn: document.getElementById('update-release')
+            };
+
+            let state = null;
+
+            const fmtVersion = (value) => {
+                if (!value) return 'v-';
+                const text = String(value).replace(/^v/i, '');
+                return `v${text}`;
+            };
+            const isBusy = (s) => !!s && ['checking', 'downloading', 'installing'].includes(s.status);
+            const formatReleaseNotes = (raw) => String(raw || '')
+                .replace(/\r\n/g, '\n')
+                .replace(/^#{1,6}\s+/gm, '')
+                .replace(/^\s*[-*]\s+/gm, '• ')
+                .replace(/\*\*([^*]+)\*\*/g, '$1')
+                .replace(/`([^`]+)`/g, '$1')
+                .trim();
+            const isModalOpen = () => !!ui.modal && !ui.modal.classList.contains('hidden');
+            const openModal = () => {
+                if (ui.toast) ui.toast.classList.add('hidden');
+                if (ui.modal) ui.modal.classList.remove('hidden');
+            };
+            const closeModal = () => {
+                if (ui.modal) ui.modal.classList.add('hidden');
+                if (state) render(state);
+            };
+
+            const setProgress = (s) => {
+                if (!ui.progressWrap) return;
+                if (!s || s.status !== 'downloading' || !s.progress) {
+                    ui.progressWrap.classList.add('hidden');
+                    return;
+                }
+                ui.progressWrap.classList.remove('hidden');
+                const progress = s.progress;
+                const percent = Number.isFinite(progress.percent) ? progress.percent : 0;
+                const mib = (bytes) => (Number(bytes) || 0) / (1024 * 1024);
+                if (ui.progressBar) ui.progressBar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+                if (ui.progressText) {
+                    ui.progressText.textContent = progress.percent == null
+                        ? `已下载 ${mib(progress.received).toFixed(1)} MB`
+                        : `${percent}% · ${mib(progress.received).toFixed(1)} / ${mib(progress.total).toFixed(1)} MB`;
+                }
+            };
+
+            const render = (next) => {
+                if (!next) return;
+                state = next;
+                const available = next.status === 'available';
+                const latest = fmtVersion(next.latestVersion);
+                const current = fmtVersion(next.currentVersion);
+
+                if (ui.version) ui.version.textContent = current;
+
+                if (ui.checkBtn) {
+                    ui.checkBtn.disabled = isBusy(next);
+                    if (next.status === 'checking') ui.checkBtn.textContent = '检查中…';
+                    else if (next.status === 'downloading') ui.checkBtn.textContent = '下载中…';
+                    else if (next.status === 'installing') ui.checkBtn.textContent = '更新中…';
+                    else if (available) ui.checkBtn.textContent = `发现 ${latest}`;
+                    else if (next.status === 'up-to-date') ui.checkBtn.textContent = '已是最新';
+                    else ui.checkBtn.textContent = '检查更新';
+                }
+                if (ui.dot) ui.dot.classList.toggle('hidden', !(available && !next.dismissed));
+
+                if (ui.toast) {
+                    const showToast = available && !next.dismissed && !isModalOpen();
+                    ui.toast.classList.toggle('hidden', !showToast);
+                    if (showToast) {
+                        if (ui.toastVersion) ui.toastVersion.textContent = latest;
+                        if (ui.toastCurrent) ui.toastCurrent.textContent = current;
+                    }
+                }
+
+                if (ui.title) {
+                    if (next.status === 'downloading') ui.title.textContent = '正在下载更新包';
+                    else if (next.status === 'installing') ui.title.textContent = '正在安装更新';
+                    else if (next.status === 'checking') ui.title.textContent = '正在检查更新';
+                    else if (next.status === 'up-to-date') ui.title.textContent = '当前已是最新版本';
+                    else if (next.status === 'error') ui.title.textContent = '更新失败';
+                    else if (available) ui.title.textContent = `发现新版本 ${latest}`;
+                    else ui.title.textContent = '软件更新';
+                }
+                if (ui.versions) {
+                    ui.versions.textContent = next.latestVersion && next.latestVersion !== next.currentVersion
+                        ? `当前 ${current} → 最新 ${latest}`
+                        : `当前 ${current}`;
+                }
+                if (ui.notes) {
+                    let notes = next.notes || '';
+                    if (!notes) notes = '（该版本没有填写更新说明）';
+                    ui.notes.textContent = formatReleaseNotes(notes);
+                }
+                if (ui.status) {
+                    let text = '';
+                    if (next.status === 'checking') text = '正在连接 GitHub 检查新版本…';
+                    else if (next.status === 'downloading') text = '正在下载更新包，请保持网络连接…';
+                    else if (next.status === 'installing') text = '更新包已下载，正在关闭应用完成安装，随后会自动重启。';
+                    else if (next.status === 'error') text = next.error || '更新失败';
+                    else if (available && !next.canAutoUpdate) text = '当前运行方式不支持一键更新，请前往发布页手动下载。';
+                    else if (available) text = '点击“一键更新”下载并自动安装，完成后会自动重启。';
+                    else if (next.status === 'up-to-date') text = '你已经在使用最新版本。';
+                    ui.status.textContent = text;
+                    ui.status.className = 'text-xs mt-3 text-left '
+                        + (next.status === 'error' ? 'text-amber-200' : (next.status === 'up-to-date' ? 'text-emerald-200' : 'text-[#93a2ba]'));
+                }
+
+                if (ui.installBtn) {
+                    const showInstall = available
+                        || next.status === 'downloading'
+                        || next.status === 'installing'
+                        || (next.status === 'error' && !!next.latestVersion);
+                    ui.installBtn.classList.toggle('hidden', !showInstall);
+                    ui.installBtn.disabled = isBusy(next) || !next.canAutoUpdate;
+                    if (next.status === 'downloading') ui.installBtn.textContent = '下载中…';
+                    else if (next.status === 'installing') ui.installBtn.textContent = '正在安装…';
+                    else if (next.status === 'error') ui.installBtn.textContent = '重试更新';
+                    else ui.installBtn.textContent = '一键更新';
+                }
+                if (ui.releaseBtn) {
+                    ui.releaseBtn.classList.toggle('hidden', !next.releaseUrl);
+                }
+                setProgress(next);
+            };
+
+            const checkNow = async () => {
+                if (!window.updates) return;
+                if (state && state.status === 'available') {
+                    openModal();
+                    return;
+                }
+                openModal();
+                try {
+                    render(await window.updates.check());
+                } catch {
+                    /* 状态事件会补充错误信息 */
+                }
+            };
+
+            const installNow = async () => {
+                if (!window.updates || !state) return;
+                if (!state.canAutoUpdate) {
+                    try { await window.updates.openRelease(); } catch { /* ignore */ }
+                    return;
+                }
+                openModal();
+                try { await window.updates.install(); } catch { /* 状态事件会补充错误信息 */ }
+            };
+
+            if (ui.checkBtn) ui.checkBtn.addEventListener('click', checkNow);
+            if (ui.installBtn) ui.installBtn.addEventListener('click', installNow);
+            if (ui.toastInstall) ui.toastInstall.addEventListener('click', installNow);
+            if (ui.toastDetails) ui.toastDetails.addEventListener('click', openModal);
+            if (ui.toastClose) {
+                ui.toastClose.addEventListener('click', async () => {
+                    if (!window.updates || !state) return;
+                    try { await window.updates.dismiss(state.latestVersion); } catch { /* ignore */ }
+                    if (ui.toast) ui.toast.classList.add('hidden');
+                });
+            }
+            if (ui.close) ui.close.addEventListener('click', closeModal);
+            if (ui.modal) {
+                ui.modal.addEventListener('click', (event) => {
+                    if (event.target && event.target.dataset && event.target.dataset.updateClose === '1') {
+                        closeModal();
+                    }
+                });
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && isModalOpen()) closeModal();
+                });
+            }
+            if (ui.releaseBtn) {
+                ui.releaseBtn.addEventListener('click', async () => {
+                    if (!window.updates) return;
+                    try { await window.updates.openRelease(); } catch { /* ignore */ }
+                });
+            }
+
+            window.updates.onState(render);
+            window.updates.getState().then(render).catch(() => {});
+        }
+
         // --- 初始化 ---
         window.onload = function() {
             loadFairState();
@@ -3449,6 +3834,7 @@ for (let i = 0; i < count; i++) {
                 });
             });
             initDanmakuUI();
+            initUpdateUI();
             fetchItemsFromRiot(); // 启动全自动流程
         };
 

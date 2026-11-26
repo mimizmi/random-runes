@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu  } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
 const path = require('path');
 const { authenticate, createHttp1Request } = require('league-connect');
 const https = require('https');
@@ -6,8 +6,10 @@ const crypto = require('crypto');
 const WebSocket = require('ws');
 const net = require('net');
 const zlib = require('zlib');
+const { createUpdater } = require('./updater');
 
 let mainWindow;
+let updater = null;
 
 // === Danmaku (Bilibili) Logic ===
 const danmakuState = {
@@ -943,7 +945,18 @@ function createWindow() {
 
 app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
+
+    // Register update IPC before the renderer can ask for its state.
+    updater = createUpdater({
+        app,
+        ipcMain,
+        shell,
+        send: sendToRenderer
+    });
+    updater.init();
+
     createWindow();
+    updater.startAutoCheck();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

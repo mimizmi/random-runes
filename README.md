@@ -36,6 +36,20 @@
 - 打开 Releases 下载新版 zip，解压后覆盖旧目录即可；本地配置保存在系统用户目录，不随覆盖丢失。
 - 每次发布由 GitHub Actions 自动构建，版本号与 `package.json`、Git tag 保持一致。
 
+### 自动更新
+
+从 `v7.1.0` 开始，打包版内置自动更新：
+
+- 启动约 5 秒后自动检查一次 GitHub Releases，之后每 6 小时检查一次。
+- 侧边栏版本号旁出现小圆点、右下角出现“发现新版本”提示。
+- 点“一键更新”后：下载 zip → 校验 SHA256 → 关闭应用 → 自动替换安装目录文件 → 重启。
+- 用户数据（Cookie、房间号、配置）在 `%APPDATA%\random-runes`，更新不会清除。
+- 更新失败会弹窗提示；详细日志在 `%TEMP%\random-runes-update.log`，也可以到 Releases 手动下载。
+
+> `v7.0.0` 还没有内置更新器，需要先手动下载一次 `v7.1.0`（或更新版本），之后才能使用一键更新。
+>
+> 自动更新会替换安装目录里的程序文件，请把程序放在当前用户有写权限的目录中（不要放在只读目录）。
+
 ## 开发
 
 ```powershell
@@ -93,6 +107,7 @@ git push origin main --follow-tags
 
 ```text
 main.js                 Electron 主进程（窗口、LCU、B 站弹幕、扫码登录）
+updater.js              自动检查更新、下载校验与安装助手
 preload.js              contextBridge 暴露给渲染进程的 API
 index.html              界面与渲染进程逻辑
 build/icon.ico          应用图标
